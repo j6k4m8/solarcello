@@ -106,7 +106,7 @@ Planet.prototype.frame = function() {
     };
     this.position = polarToCartesian(nextPos);
     fill(this.fill);
-    ellipse((this.position.x * ORBIT_SCALE) + center.x, (this.position.y * ORBIT_SCALE) + center.y, this.radius*ORBIT_SCALE*slices[i], this.radius*ORBIT_SCALE*slices[i]);
+    ellipse((this.position.x * ORBIT_SCALE) + center.x, (this.position.y * ORBIT_SCALE) + center.y, this.radius*ORBIT_SCALE, this.radius*ORBIT_SCALE);
 };
 
 function mouseClicked() {
@@ -121,27 +121,12 @@ function draw() {
     if (MODIFYING) {
         ORBIT_SCALE = (2 * mouseY / windowHeight) || 1;
         SPEED = (5 * mouseX / windowHeight) || 1;
-    } else {
-        // ORBIT_SCALE = 100*mic.getLevel();
     }
+
     noStroke();
     background(10, 10, 10, 75);
-    spectrum = fft.analyze();
-    slices = [
-        spectrum.slice(920,1023).reduce(sum),
-        spectrum.slice(805, 920).reduce(sum),
-        spectrum.slice(690, 805).reduce(sum),
-        spectrum.slice(575, 690).reduce(sum),
-        spectrum.slice(460, 575).reduce(sum),
-        spectrum.slice(345, 460).reduce(sum),
-        spectrum.slice(230, 345).reduce(sum),
-        spectrum.slice(115, 230).reduce(sum),
-        spectrum.slice(0,   115).reduce(sum)
-    ];
-    console.log(slices)
 
-    i = 0;
-    for (i = 0; i < planets.length; i++) {
+    for (var i = 0; i < planets.length; i++) {
         planets[i].frame();
     }
 }
