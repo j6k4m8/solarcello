@@ -7,8 +7,8 @@ var mic;
 function setup() {
 
     mic = new p5.AudioIn();
-    fft = new p5.FFT();
     mic.start();
+    fft = new p5.FFT();
 
     createCanvas(window.windowWidth, window.windowHeight);
     center = {x: window.windowWidth / 2,
@@ -138,6 +138,7 @@ function draw() {
         spectrum.slice(115, 230).reduce(sum),
         spectrum.slice(0,   115).reduce(sum)
     ];
+    console.log(slices)
 
     i = 0;
     for (i = 0; i < planets.length; i++) {
