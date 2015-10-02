@@ -3,10 +3,23 @@ ORBIT_SCALE = 1;
 MODIFYING = false;
 
 
+function preload() {
+    music = loadSound('bensound-scifi.mp3');
+}
+
+
 function setup() {
+
+    mic = new p5.SoundFile('bensound-scifi.mp3');
+
+    fft = new p5.FFT();
+    music.play();
+
+
     createCanvas(window.windowWidth, window.windowHeight);
     center = {x: window.windowWidth / 2,
             y: window.windowHeight / 2};
+    centroid = center;
 
     Sun = new Planet({
         fill: color(250, 225, 0),
@@ -92,7 +105,7 @@ Planet = function(opts) {
     });
 }
 
-Planet.prototype.frame = function() {
+Planet.prototype.frame = function(i) {
     var startPosPolar = cartesianToPolar(this.position);
     var nextPos = {
         r: startPosPolar.r,
@@ -100,7 +113,11 @@ Planet.prototype.frame = function() {
     };
     this.position = polarToCartesian(nextPos);
     fill(this.fill);
-    ellipse((this.position.x * ORBIT_SCALE) + center.x, (this.position.y * ORBIT_SCALE) + center.y, this.radius*ORBIT_SCALE, this.radius*ORBIT_SCALE);
+    ellipse(
+        (this.position.x * ORBIT_SCALE) + center.x,
+        (this.position.y * ORBIT_SCALE) + center.y,
+        this.radius*ORBIT_SCALE + slices[i]/70,
+        this.radius*ORBIT_SCALE + slices[i]/70);
 };
 
 function mouseClicked() {
@@ -112,17 +129,39 @@ sum = function(a, b) {
 };
 
 function draw() {
-    if (MODIFYING) {
-        ORBIT_SCALE = (2 * mouseY / windowHeight) || 1;
-        SPEED = (5 * mouseX / windowHeight) || 1;
+    ORBIT_SCALE = (4 * mouseY / (windowHeight/2)) || 1;
+    SPEED = (5 * mouseX / windowHeight) || 1;
+
+    var spectrum = fft.analyze();
+    slices = []
+    var j = 0;
+    for (var i = 0; j < 8; i += next) {
+        next = pow(j+1, 2);
+        slices[j++] = spectrum.slice(i, i+next).reduce(sum);
+        i+= next;
     }
+
+    background(slices[5] / 100 || 10, slices[6] / 200, 45);
+    if (slices[7] > 8000) {
+        strokeWeight(300);
+        stroke(random(255), random(255), random(255));
+        line(0, random(0, windowHeight), windowWidth, random(0, windowHeight));
+    }
+    // console.log(slices)
 
     noStroke();
-    background(10, 10, 10, 75);
-
-    for (var i = 0; i < planets.length; i++) {
-        planets[i].frame();
+    for (var i = planets.length - 1; i >= 0; i--) {
+        planets[i].frame(i+1);
     }
+
+    var vx = random(-1, 1), vy = random(-1, 1);
+    if (abs((center.x + vx) < centroid.x + 100)) {
+        center.x += vx;
+    }
+    if (abs((center.y + vy) < centroid.y + 100)) {
+        center.y += vy;
+    }
+
 }
 
 
