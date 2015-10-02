@@ -126,7 +126,7 @@ function draw() {
     }
     noStroke();
     background(10, 10, 10, 75);
-    var spectrum = fft.analyze();
+    spectrum = fft.analyze();
     slices = [
         spectrum.slice(920,1023).reduce(sum),
         spectrum.slice(805, 920).reduce(sum),
