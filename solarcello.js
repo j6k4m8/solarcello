@@ -2,14 +2,8 @@ SPEED = 1;
 ORBIT_SCALE = 1;
 MODIFYING = false;
 
-var mic;
 
 function setup() {
-
-    mic = new p5.AudioIn();
-    mic.start();
-    fft = new p5.FFT();
-
     createCanvas(window.windowWidth, window.windowHeight);
     center = {x: window.windowWidth / 2,
             y: window.windowHeight / 2};
