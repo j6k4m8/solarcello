@@ -7,6 +7,7 @@ var mic;
 function setup() {
 
     mic = new p5.AudioIn();
+    fft = new p5.FFT();
     mic.start();
 
     createCanvas(window.windowWidth, window.windowHeight);
@@ -105,14 +106,16 @@ Planet.prototype.frame = function() {
     };
     this.position = polarToCartesian(nextPos);
     fill(this.fill);
-    ellipse((this.position.x * ORBIT_SCALE) + center.x, (this.position.y * ORBIT_SCALE) + center.y, this.radius*ORBIT_SCALE, this.radius*ORBIT_SCALE);
+    ellipse((this.position.x * ORBIT_SCALE) + center.x, (this.position.y * ORBIT_SCALE) + center.y, this.radius*ORBIT_SCALE*slices[i], this.radius*ORBIT_SCALE*slices[i]);
 };
 
 function mouseClicked() {
     MODIFYING = !MODIFYING;
 }
 
-
+sum = function(a, b) {
+    return a + b;
+};
 
 function draw() {
     if (MODIFYING) {
@@ -123,10 +126,25 @@ function draw() {
     }
     noStroke();
     background(10, 10, 10, 75);
-    for (var i = 0; i < planets.length; i++) {
+    var spectrum = fft.analyze();
+    slices = [
+        spectrum.slice(920,1023).reduce(sum),
+        spectrum.slice(805, 920).reduce(sum),
+        spectrum.slice(690, 805).reduce(sum),
+        spectrum.slice(575, 690).reduce(sum),
+        spectrum.slice(460, 575).reduce(sum),
+        spectrum.slice(345, 460).reduce(sum),
+        spectrum.slice(230, 345).reduce(sum),
+        spectrum.slice(115, 230).reduce(sum),
+        spectrum.slice(0,   115).reduce(sum)
+    ];
+
+    i = 0;
+    for (i = 0; i < planets.length; i++) {
         planets[i].frame();
     }
 
+    console.log(slices)
+
     micLevel = mic.getLevel();
-    console.log(micLevel)
 }
