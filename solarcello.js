@@ -122,7 +122,7 @@ function draw() {
         ORBIT_SCALE = (2 * mouseY / windowHeight) || 1;
         SPEED = (5 * mouseX / windowHeight) || 1;
     } else {
-        ORBIT_SCALE = 100*mic.getLevel();
+        // ORBIT_SCALE = 100*mic.getLevel();
     }
     noStroke();
     background(10, 10, 10, 75);
@@ -143,8 +143,4 @@ function draw() {
     for (i = 0; i < planets.length; i++) {
         planets[i].frame();
     }
-
-    console.log(slices)
-
-    micLevel = mic.getLevel();
 }
